@@ -12,6 +12,9 @@ LISTPATH=$1
 UNIQID=$(cat $LISTPATH | cut -d , -f 1 | sort | uniq)
 
 WORKING_DIR="./data"
+PATH_TO_INGREDIENT_SENTENCES="./all-recipecom-ingredient-sentences.txt"
+PATH_TO_INSTRUCTION_SENTENCES="./all-recipecom-instruction-sentences.txt"
+PATH_TO_BACKGROUND_SENTENCES="./eng-eu_web_2014_1M-sentences_cleaned.txt"
 SEGMENT_LENGTH=8 # in seconds
 
 mkdir $WORKING_DIR
@@ -45,6 +48,7 @@ done
 
 echo "Downloading video descriptions..."
 mkdir $WORKING_DIR/descriptions
+mkdir $WORKING_DIR/classify
 for id in $UNIQID; do
 youtube-dl \
 --skip-download \
@@ -52,6 +56,12 @@ youtube-dl \
 -o "$WORKING_DIR/descriptions/%(id)s.%(ext)s" \
 https://youtube.com/watch?v=$id;
 python extract_from_url.py $WORKING_DIR/descriptions/$id.description;
+python sentence_classifier.py \
+$PATH_TO_INGREDIENT_SENTENCES \
+$PATH_TO_INSTRUCTION_SENTENCES \
+$PATH_TO_BACKGROUND_SENTENCES \
+$WORKING_DIR/descriptions \
+$WORKING_DIR/classify;
 done
 
 echo "Downloading speech transcripts..."
