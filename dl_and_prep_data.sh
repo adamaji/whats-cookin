@@ -1,7 +1,12 @@
 # Downloads and prepares the videos and accompanying data 
 # from the What's Cookin release for alignment
 # Usage: dl_and_prep_data.sh [path to initial list of videos]
-# Prereqs: youtube-dl, ffmpeg
+# Requirements: youtube-dl, ffmpeg
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: dl_and_prep_data.sh [path to csv of videos]"
+  exit 0
+fi
 
 LISTPATH=$1
 UNIQID=$(cat $LISTPATH | cut -d , -f 1 | sort | uniq)
@@ -45,7 +50,8 @@ youtube-dl \
 --skip-download \
 --write-description \
 -o "$WORKING_DIR/descriptions/%(id)s.%(ext)s" \
-https://youtube.com/watch?v=$id
+https://youtube.com/watch?v=$id;
+python extract_from_url.py $WORKING_DIR/descriptions/$id.description;
 done
 
 echo "Downloading speech transcripts..."
