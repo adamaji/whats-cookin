@@ -63,12 +63,12 @@ $PATH_TO_INSTRUCTION_SENTENCES \
 $PATH_TO_BACKGROUND_SENTENCES \
 $WORKING_DIR/descriptions \
 $WORKING_DIR/classify;
+done
 echo "...aligning segments to sentences..."
 python align_action_object_to_sentence.py \
 $LISTPATH \
 $WORKING_DIR/classify \
 $WORKING_DIR/aligned_sentences.txt;
-done
 
 echo "Downloading speech transcripts..."
 mkdir $WORKING_DIR/transcripts
