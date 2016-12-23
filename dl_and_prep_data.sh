@@ -56,12 +56,18 @@ youtube-dl \
 -o "$WORKING_DIR/descriptions/%(id)s.%(ext)s" \
 https://youtube.com/watch?v=$id;
 python extract_from_url.py $WORKING_DIR/descriptions/$id.description;
+echo "...classifying recipe sentences..."
 python sentence_classifier.py \
 $PATH_TO_INGREDIENT_SENTENCES \
 $PATH_TO_INSTRUCTION_SENTENCES \
 $PATH_TO_BACKGROUND_SENTENCES \
 $WORKING_DIR/descriptions \
 $WORKING_DIR/classify;
+echo "...aligning segments to sentences..."
+python align_action_object_to_sentence.py \
+$LISTPATH \
+$WORKING_DIR/classify \
+$WORKING_DIR/aligned_sentences.txt;
 done
 
 echo "Downloading speech transcripts..."

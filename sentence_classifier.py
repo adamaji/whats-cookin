@@ -67,12 +67,17 @@ def train_and_classify(ingredient_text_path, instruction_text_path, bg_text_path
     text = ""
     with open(os.path.join(test_path, fn), "r", encoding="utf-8") as f:
       text = f.read()
-    sents = sent_detector.tokenize(text.strip().lower())
+
+    split = text.split("\n")
+    sents= []
+    for s in split:
+      sents += tokenizer.tokenize(s.strip().lower())    
+
     sents_cv = cv.transform(sents)
     tf_transformer = TfidfTransformer(use_idf=True)
     sents_tf = tf_transformer.fit_transform(sents_cv)
     predicts = classifier.predict(sents_tf)
-    with open(os.path.join(out_path, fn + ".clf"), "w", encoding="utf-8") as f:
+    with open(os.path.join(out_path, fn), "w", encoding="utf-8") as f:
       for i in range(len(sents)):
         if predicts[i] == INSTRUCTION_LABEL:
           instruction = sents[i].strip("\n")
